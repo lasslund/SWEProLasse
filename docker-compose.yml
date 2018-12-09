@@ -1,0 +1,57 @@
+version: '3'
+services:   
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        volumes:
+            - ./conf.d:/etc/nginx/conf.d
+        expose: 
+            - "80"
+        ports:
+            - "8080:80"
+        #depends_on ensures the nginx doesn't close because the
+        #flask isn't finished running - "race condition".
+        depends_on:
+            - flask 
+        #links:
+        #    - flask:flask
+        networks:
+            - nginxnet
+    
+    
+    flask:
+        build: .
+        container_name: flask
+        #links:
+        #    - postgres:postgres
+        volumes:
+            - .:/opt/services/flask/src
+        networks:
+            - nginxnet
+            - dbnet
+        #depends_on ensures the flask app doesn't close because the
+        #database isn't finished running - "race condition".
+        depends_on:
+            - database
+            
+    database: 
+        restart: always
+        image: postgres:latest
+        container_name: database
+        #ports:
+        #    - 5432
+        volumes:
+            - "dbdata:/var/lib/postgresql/data"
+        networks:
+            - dbnet
+
+#name database to preserve it between down and up            
+volumes:
+    dbdata:
+
+      
+networks:
+  dbnet:
+    driver: bridge
+  nginxnet:
+    driver: bridge
