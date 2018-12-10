@@ -9,10 +9,10 @@ This is my Software Engineering project.
 Approach:
 
 //clone github repo - get URL from the repo mainpage.
-$ git clone <URL>
+>$ git clone <URL>
 
 //run docker-compose as daemon
-$ docker-compose up -d
+>$ docker-compose up -d
 
 //go to your favorit webbrowser and write:
 http://localhost:8080
